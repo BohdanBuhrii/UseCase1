@@ -48,6 +48,15 @@ namespace RestCountriesAPI.Services
             return countries;
         }
 
+        /// <summary>
+        /// Returns up to 'limit' first countries from the array.
+        /// </summary>
+        /// <param name="countries">Array of country nodes.</param>
+        /// <param name="limit">Max number of countries.</param>
+        /// <returns>Array of country nodes.</returns>
+        public static IEnumerable<JsonNode?> TakeUpTo(this IEnumerable<JsonNode?> countries, int limit)
+            => countries.Take(limit);
+
         private static string GetCommonName(JsonNode? x)
         {
             if (x == null) return string.Empty;
