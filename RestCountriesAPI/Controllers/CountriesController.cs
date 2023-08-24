@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using static System.Net.WebRequestMethods;
+using Microsoft.Extensions.Options;
+using RestCountriesAPI.Options;
+using System.Text.Json.Nodes;
 
 namespace RestCountriesAPI.Controllers;
 
@@ -8,21 +9,21 @@ namespace RestCountriesAPI.Controllers;
 [Route("[controller]")]
 public class CountriesController : ControllerBase
 {
-    private readonly ILogger<CountriesController> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly RestCountriesOptions _options;
 
-    public CountriesController(ILogger<CountriesController> logger, IHttpClientFactory httpClientFactory)
+    public CountriesController(IHttpClientFactory httpClientFactory, IOptions<RestCountriesOptions> options)
     {
-        _logger = logger;
         _httpClientFactory = httpClientFactory;
+        _options = options.Value;
     }
 
     [HttpGet(Name = "GetCountries")]
-    public async Task<dynamic[]> Get()
+    public async Task<JsonNode?> Get(string? nameSearch)
     {
         using var client = _httpClientFactory.CreateClient();
 
-        var countries = await client.GetFromJsonAsync<dynamic[]>("https://restcountries.com/v3.1/all");
+        var countries = JsonNode.Parse(await client.GetStringAsync(_options.Url));
 
         return countries;
     }

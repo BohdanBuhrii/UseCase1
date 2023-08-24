@@ -1,3 +1,5 @@
+using RestCountriesAPI.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,6 +10,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // Add HttpClient
 builder.Services.AddHttpClient();
+
+builder.Services.Configure<RestCountriesOptions>(
+    builder.Configuration.GetSection(RestCountriesOptions.RestCountries));
 
 var app = builder.Build();
 
