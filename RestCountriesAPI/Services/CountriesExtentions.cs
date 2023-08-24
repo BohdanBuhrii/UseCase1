@@ -13,8 +13,8 @@ namespace RestCountriesAPI.Services
         /// <param name="countries">Array of country nodes.</param>
         /// <param name="nameSearch">Search term.</param>
         /// <returns>Filtered array of country nodes.</returns>
-        public static IEnumerable<JsonNode?> FilterByName(this IEnumerable<JsonNode?> countries, string nameSearch)
-            => countries.Where(x => GetCommonName(x).ToLower().Contains(nameSearch.ToLower()));
+        public static IEnumerable<JsonNode?> FilterByName(this IEnumerable<JsonNode?> countries, string? nameSearch)
+            => nameSearch is null ? countries : countries.Where(x => GetCommonName(x).ToLower().Contains(nameSearch.ToLower()));
 
         /// <summary>
         /// Filters values by country's 'population'. 
@@ -22,8 +22,8 @@ namespace RestCountriesAPI.Services
         /// <param name="countries">Array of country nodes.</param>
         /// <param name="maxPopulation">Maximum population in millions.</param>
         /// <returns>Countries with population less than provided number.</returns>
-        public static IEnumerable<JsonNode?> FilterByPopulation(this IEnumerable<JsonNode?> countries, int maxPopulation)
-            => countries.Where(x =>
+        public static IEnumerable<JsonNode?> FilterByPopulation(this IEnumerable<JsonNode?> countries, int? maxPopulation)
+            => maxPopulation is null ? countries : countries.Where(x =>
             {
                 if (x == null) return false;
 
@@ -39,7 +39,7 @@ namespace RestCountriesAPI.Services
         /// <param name="countries">Array of country nodes.</param>
         /// <param name="order">Can be 'ascend' or 'descend'.</param>
         /// <returns>Ordered countries.</returns>
-        public static IEnumerable<JsonNode?> OrderByName(this IEnumerable<JsonNode?> countries, string order)
+        public static IEnumerable<JsonNode?> OrderByName(this IEnumerable<JsonNode?> countries, string? order)
         {
             if (order == Order.Ascending) return countries.OrderBy(GetCommonName);
 
@@ -54,8 +54,8 @@ namespace RestCountriesAPI.Services
         /// <param name="countries">Array of country nodes.</param>
         /// <param name="limit">Max number of countries.</param>
         /// <returns>Array of country nodes.</returns>
-        public static IEnumerable<JsonNode?> TakeUpTo(this IEnumerable<JsonNode?> countries, int limit)
-            => countries.Take(limit);
+        public static IEnumerable<JsonNode?> TakeUpTo(this IEnumerable<JsonNode?> countries, int? limit)
+            => limit is null ? countries : countries.Take((int)limit);
 
         private static string GetCommonName(JsonNode? x)
         {

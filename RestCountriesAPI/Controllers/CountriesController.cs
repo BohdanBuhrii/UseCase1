@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RestCountriesAPI.Options;
+using RestCountriesAPI.Services;
 using System.Text.Json.Nodes;
 
 namespace RestCountriesAPI.Controllers;
@@ -19,12 +20,18 @@ public class CountriesController : ControllerBase
     }
 
     [HttpGet(Name = "GetCountries")]
-    public async Task<JsonNode?> Get(string? nameSearch)
+    public async Task<IEnumerable<JsonNode?>> Get(string? nameSearch, int? maxPopulation, string? order, int? limit)
     {
         using var client = _httpClientFactory.CreateClient();
 
-        var countries = JsonNode.Parse(await client.GetStringAsync(_options.Url));
+        var countries = JsonNode.Parse(await client.GetStringAsync(_options.Url)) ?? new JsonArray();
 
-        return countries;
+        return countries
+            .AsArray()
+            .AsEnumerable()
+            .FilterByName(nameSearch)
+            .FilterByPopulation(maxPopulation)
+            .OrderByName(order)
+            .TakeUpTo(limit);
     }
 }
