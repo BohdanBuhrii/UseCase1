@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Nodes;
+﻿using RestCountriesAPI.Constants;
+using System.Text.Json.Nodes;
 
 namespace RestCountriesAPI.Services
 {
@@ -13,18 +14,7 @@ namespace RestCountriesAPI.Services
         /// <param name="nameSearch">Search term.</param>
         /// <returns>Filtered array of country nodes.</returns>
         public static IEnumerable<JsonNode?> FilterByName(this IEnumerable<JsonNode?> countries, string nameSearch)
-            => countries.Where(x =>
-            {
-                if (x == null) return false;
-
-                var name = x["name"];
-                if (name is null) return false;
-
-                var common = name["common"];
-                if (common is null) return false;
-
-                return common.ToString().ToLower().Contains(nameSearch.ToLower());
-            });
+            => countries.Where(x => GetCommonName(x).ToLower().Contains(nameSearch.ToLower()));
 
         /// <summary>
         /// Filters values by country's 'population'. 
@@ -43,5 +33,32 @@ namespace RestCountriesAPI.Services
                 return population.GetValue<int>() < maxPopulation * 10e6;
             });
 
+        /// <summary>
+        /// Sorts countries by 'name/common' attribute.
+        /// </summary>
+        /// <param name="countries">Array of country nodes.</param>
+        /// <param name="order">Can be 'ascend' or 'descend'.</param>
+        /// <returns>Ordered countries.</returns>
+        public static IEnumerable<JsonNode?> OrderByName(this IEnumerable<JsonNode?> countries, string order)
+        {
+            if (order == Order.Ascending) return countries.OrderBy(GetCommonName);
+
+            if (order == Order.Descending) return countries.OrderBy(GetCommonName);
+
+            return countries;
+        }
+
+        private static string GetCommonName(JsonNode? x)
+        {
+            if (x == null) return string.Empty;
+
+            var name = x["name"];
+            if (name is null) return string.Empty;
+
+            var common = name["common"];
+            if (common is null) return string.Empty;
+
+            return common.ToString();
+        }
     }
 }
