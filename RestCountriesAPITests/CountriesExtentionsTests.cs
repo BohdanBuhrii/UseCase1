@@ -22,7 +22,7 @@ namespace RestCountriesAPITests
         public void FilterByName_ShouldNotFilter_IfSearchIsNull()
         {
             // Arrange
-            var initLen = countries.Count();
+            var initLen = countries.Count;
 
             // Act
             var result = countries.FilterByName(null);
@@ -44,15 +44,18 @@ namespace RestCountriesAPITests
             var result = countries.FilterByName(searchTerm);
 
             // Assert
-            Assert.That(result.Count(), Is.EqualTo(1));
-            Assert.That(result.First(), Is.EqualTo(expected));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Count(), Is.EqualTo(1));
+                Assert.That(result.First(), Is.EqualTo(expected));
+            });  
         }
 
         [Test]
         public void FilterByPopulation_ShouldNotFilter_IfMaxPopulationIsNull()
         {
             // Arrange
-            var initLen = countries.Count();
+            var initLen = countries.Count;
 
             // Act
             var result = countries.FilterByPopulation(null);
