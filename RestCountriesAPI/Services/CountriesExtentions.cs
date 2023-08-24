@@ -30,7 +30,7 @@ namespace RestCountriesAPI.Services
                 var population = x["population"];
                 if (population is null) return false;
 
-                return population.GetValue<int>() < maxPopulation * 10e6;
+                return population.GetValue<int>() < maxPopulation * 10e5;
             });
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace RestCountriesAPI.Services
         {
             if (order == Order.Ascending) return countries.OrderBy(GetCommonName);
 
-            if (order == Order.Descending) return countries.OrderBy(GetCommonName);
+            if (order == Order.Descending) return countries.OrderByDescending(GetCommonName);
 
             return countries;
         }
